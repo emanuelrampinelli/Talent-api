@@ -1,14 +1,15 @@
 package com.talent.repository;
 
 import com.talent.model.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Repository
-public class UsuarioRepository {
+@Transactional
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
-    public Optional<Usuario> findByEmail (String email){
-        return null;
-    }
+     Optional<Usuario> findByEmail(String email);
 }

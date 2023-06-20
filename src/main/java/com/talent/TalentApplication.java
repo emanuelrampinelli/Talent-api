@@ -16,5 +16,4 @@ public class TalentApplication {
 	@Bean
 	public PasswordEncoder getPasswordEnconder(){ return new BCryptPasswordEncoder();}
 
-
 }
