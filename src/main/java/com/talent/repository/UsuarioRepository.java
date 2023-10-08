@@ -1,15 +1,17 @@
 package com.talent.repository;
 
 import com.talent.model.Usuario;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
-import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @Transactional
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
 
-     Optional<Usuario> findByEmail(String email);
+     UserDetails findByEmail(String email);
+
 }

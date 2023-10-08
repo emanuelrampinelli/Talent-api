@@ -1,77 +1,96 @@
 package com.talent.controllers;
 
-import java.util.Date;
-import java.util.Optional;
-
-import com.talent.dto.UsuarioDTO;
+import com.talent.config.security.services.TokenJWTService;
+import com.talent.dto.usuario.UsuarioDTO;
+import com.talent.dto.usuario.request.LoginUsuarioRequestDTO;
+import com.talent.dto.usuario.request.RegistrarUsuarioRequestDTO;
+import com.talent.dto.usuario.response.LoginUsuarioResponseDTO;
+import com.talent.dto.usuario.response.RegistrarUsuarioResponseDTO;
+import com.talent.enums.MensagemResponseEnum;
 import com.talent.model.Usuario;
 import com.talent.services.UsuarioService;
-import org.springframework.beans.BeanUtils;
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class UsuarioController {
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private TokenJWTService tokenJWTService;
 
     @Autowired
     private UsuarioService usuarioService;
 
-    @Autowired
-    private PasswordEncoder encoder;
+    /**
+     * Autentica um usuário.
+     *
+     * @param usuario Dados do usuário para autenticação.
+     * @return ResponseEntity contendo LoginUsuarioResponseDTO ou mensagem de erro.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginUsuarioResponseDTO> login(@RequestBody @Valid LoginUsuarioRequestDTO usuario) {
+        LoginUsuarioResponseDTO loginUsuarioResponseDTO;
 
-    @GetMapping
-    public ResponseEntity<Object> findByUsuario() {
+        try {
+            var usernamePassword = new UsernamePasswordAuthenticationToken(usuario.getEmail(), usuario.getSenha());
+            var auth = authenticationManager.authenticate(usernamePassword);
+            var token = tokenJWTService.gerarTokenJWT((Usuario) auth.getPrincipal());
 
-        String user = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            UsuarioDTO usuarioDTO = usuarioService.findByEmail(usuario.getEmail());
+            loginUsuarioResponseDTO = new LoginUsuarioResponseDTO(MensagemResponseEnum.AUTENTICACAO_SUCESSO, token, usuarioDTO);
 
-        //Verifica se existe este usuario em banco
-        Optional<Usuario> optUsuario = usuarioService.findByEmail(user);
+            return ResponseEntity.status(HttpStatus.OK).body(loginUsuarioResponseDTO);
 
-        //Caso nao encontre, return nao autorizado
-        if (optUsuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+        } catch (Exception ex) {
+            log.error(MensagemResponseEnum.AUTENTICACAO_FALHA.getValue() + " : " + ex.getMessage(), ex);
+            loginUsuarioResponseDTO = new LoginUsuarioResponseDTO(MensagemResponseEnum.AUTENTICACAO_FALHA, null, null);
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginUsuarioResponseDTO);
         }
-
-        Usuario usuario = optUsuario.get();
-        UsuarioDTO usuarioDto = new UsuarioDTO();
-
-        //Passa as informacoes para Model.
-        BeanUtils.copyProperties(optUsuario.get(), usuarioDto);
-
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioDto);
     }
 
+    /**
+     * Cadastra um novo usuário.
+     *
+     * @param registrarUsuarioRequestDTO Dados do novo usuário.
+     * @return ResponseEntity contendo RegistrarUsuarioResponseDTO ou mensagem de erro.
+     */
+    @PostMapping("/register")
+    public ResponseEntity<RegistrarUsuarioResponseDTO> register(@RequestBody @Valid RegistrarUsuarioRequestDTO registrarUsuarioRequestDTO) {
 
-    @PostMapping
-    public ResponseEntity<Object> save(@Valid @RequestBody UsuarioDTO usuarioDto) {
-
-        //Apenas o nome não esta sendo tratado @Valid do DTO.
-        if(usuarioDto.getNome() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        //Criptografa a senha;
-        usuarioDto.setSenha(encoder.encode(usuarioDto.getSenha()));
-
-        //Passa as informacoes para Model.
         Usuario usuario = new Usuario();
-        BeanUtils.copyProperties(usuarioDto, usuario);
-        usuario.setDataCadastro(new Date());
+        UsuarioDTO usuarioDTO = usuarioService.findByEmail(registrarUsuarioRequestDTO.getEmail());
 
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.save(usuario));
+        // Verifica a existência do mesmo email já cadastrado.
+        if (usuarioDTO != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new RegistrarUsuarioResponseDTO(MensagemResponseEnum.EMAIL_JA_CADASTRADO, null));
+        } else {
 
+            usuario.setSenha(new BCryptPasswordEncoder().encode(registrarUsuarioRequestDTO.getSenha()));
+            usuario.setDataCadastro(DateTime.now());
+
+            usuarioDTO = usuarioService.save(usuario);
+
+            if (usuarioDTO != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        new RegistrarUsuarioResponseDTO(MensagemResponseEnum.CADASTRO_SUCESSO, usuarioDTO));
+            }
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(
+                    new RegistrarUsuarioResponseDTO(MensagemResponseEnum.CADASTRO_FALHA, null));
+        }
     }
-
 }

@@ -1,39 +1,37 @@
 package com.talent.config.security.data;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
-
 import com.talent.model.Usuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+
 public class DetalheUsuarioData implements UserDetails {
 
-    private final Optional<Usuario> usuario;
+    private Usuario usuario;
 
-    public DetalheUsuarioData(Optional<Usuario> usuario) {
-        this.usuario = usuario;
+    public DetalheUsuarioData(UserDetails usuario) {
+        this.usuario = (Usuario) usuario;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // TODO Auto-generated method stub
-        return new ArrayList<>();
+        return usuario.getAuthorities();
     }
 
     @Override
     public String getPassword() {
         // TODO Auto-generated method stub
         // Se o usuario for vazio, retorne novo usuario.getSenha()
-        return usuario.orElse(new Usuario()).getSenha();
+        return usuario.getPassword();
     }
 
     @Override
     public String getUsername() {
         // TODO Auto-generated method stub
         // Se o usuario for vazio, retorne novo usuario.getEmail()
-        return usuario.orElse(new Usuario()).getEmail();
+        return usuario.getUsername();
     }
 
     @Override
@@ -57,6 +55,6 @@ public class DetalheUsuarioData implements UserDetails {
     @Override
     public boolean isEnabled() {
         // TODO Auto-generated method stub
-        return true;
+        return !usuario.isEnabled();
     }
 }

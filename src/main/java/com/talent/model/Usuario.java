@@ -1,43 +1,87 @@
 package com.talent.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.talent.enums.UsuarioPerfilEnum;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.joda.time.DateTime;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-
-import java.util.Date;
+import java.util.Collection;
 import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "USUARIO")
-public class Usuario {
+public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @NotNull
-    @Column(unique = false, length = 200)
+    @Column(length = 200)
     private String nome;
 
     @NotNull
-    @Column(unique = true, length = 200)
-    private String email;
-
-    @NotNull
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(unique = false, length = 200)
-    private String senha;
+    @Column
+    private UsuarioPerfilEnum perfil;
 
     @NotNull
     @Column
-    private Date dataCadastro;
+    private DateTime dataCadastro;
+
+    @NotNull
+    @Column
+    private boolean isBloqueado;
+
+    @Column
+    private Long idEmpresa;
+
+    @Column
+    private String nomeEmpresa;
+
+    @Column
+    private String email;
+
+    @Column
+    private String senha;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+
 
 }
