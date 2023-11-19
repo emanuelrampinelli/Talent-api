@@ -4,11 +4,13 @@ import com.talent.enums.UsuarioPerfilEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.sql.Date;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -30,11 +32,11 @@ public class Usuario implements UserDetails {
 
     @NotNull
     @Column
-    private DateTime dataCadastro;
+    private Date dataCadastro;
 
     @NotNull
     @Column
-    private boolean isBloqueado;
+    private int isBloqueado;
 
     @Column
     private Long idEmpresa;
@@ -48,40 +50,52 @@ public class Usuario implements UserDetails {
     @Column
     private String senha;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        // TODO Auto-generated method stub
+        if(this.perfil == UsuarioPerfilEnum.ADMIN)
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
+                new SimpleGrantedAuthority("ROLE_USER"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
     public String getPassword() {
-        return null;
+        // TODO Auto-generated method stub
+        // Se o usuario for vazio, retorne novo usuario.getSenha()
+        return this.getSenha();
     }
 
     @Override
     public String getUsername() {
-        return null;
+        // TODO Auto-generated method stub
+        // Se o usuario for vazio, retorne novo usuario.getEmail()
+        return this.getEmail();
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        // TODO Auto-generated method stub
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        // TODO Auto-generated method stub
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        // TODO Auto-generated method stub
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        // TODO Auto-generated method stub
+        return this.getIsBloqueado() == 0;
     }
-
 
 }

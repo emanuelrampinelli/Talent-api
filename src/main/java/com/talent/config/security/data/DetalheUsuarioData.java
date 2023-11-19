@@ -11,6 +11,7 @@ public class DetalheUsuarioData implements UserDetails {
     private Usuario usuario;
 
     public DetalheUsuarioData(UserDetails usuario) {
+
         this.usuario = (Usuario) usuario;
     }
 

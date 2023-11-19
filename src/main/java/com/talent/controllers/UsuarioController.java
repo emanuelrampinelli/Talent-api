@@ -11,14 +11,18 @@ import com.talent.model.Usuario;
 import com.talent.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.Date;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,6 +46,7 @@ public class UsuarioController {
      */
     @PostMapping("/login")
     public ResponseEntity<LoginUsuarioResponseDTO> login(@RequestBody @Valid LoginUsuarioRequestDTO usuario) {
+
         LoginUsuarioResponseDTO loginUsuarioResponseDTO;
 
         try {
@@ -57,7 +62,6 @@ public class UsuarioController {
         } catch (Exception ex) {
             log.error(MensagemResponseEnum.AUTENTICACAO_FALHA.getValue() + " : " + ex.getMessage(), ex);
             loginUsuarioResponseDTO = new LoginUsuarioResponseDTO(MensagemResponseEnum.AUTENTICACAO_FALHA, null, null);
-
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginUsuarioResponseDTO);
         }
     }
@@ -80,8 +84,10 @@ public class UsuarioController {
                     new RegistrarUsuarioResponseDTO(MensagemResponseEnum.EMAIL_JA_CADASTRADO, null));
         } else {
 
+            BeanUtils.copyProperties(registrarUsuarioRequestDTO,usuario);
             usuario.setSenha(new BCryptPasswordEncoder().encode(registrarUsuarioRequestDTO.getSenha()));
-            usuario.setDataCadastro(DateTime.now());
+            usuario.setDataCadastro(Date.valueOf(LocalDate.now()));
+            usuario.setIsBloqueado(registrarUsuarioRequestDTO.isBloqueado()?1:0);
 
             usuarioDTO = usuarioService.save(usuario);
 
