@@ -1,17 +1,24 @@
 package com.talent.model;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import javax.persistence.*;
+
+import java.util.UUID;
 
 @Entity
-@Table(name="CARGO")
 @Data
+@Table(name="CARGO")
 public class Cargo {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
+    private UUID id;
 
-    @Column(nullable = false)
+    @Column
+    @NotNull
     private String nome;
+
+    @Column
+    private String descricao;
 }
