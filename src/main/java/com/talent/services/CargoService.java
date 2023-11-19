@@ -2,7 +2,9 @@ package com.talent.services;
 
 import com.talent.dto.CargoDTO;
 import com.talent.model.Cargo;
+import com.talent.model.Instituicao;
 import com.talent.repository.CargoRepository;
+import com.talent.repository.InstituicaoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,9 @@ public class CargoService {
 
     @Autowired
     private CargoRepository cargoRepository;
+
+    @Autowired
+    private InstituicaoRepository instituicaoRepository;
 
     /**
      * Busca um cargo pelo ID.
@@ -51,31 +56,24 @@ public class CargoService {
     }
 
     /**
-     * Busca um cargo pelo ID.
-     *
-     * @param idCargo ID do cargo a ser buscado.
-     * @return ResponseEntity contendo o cargo encontrado ou mensagem de "Cargo não encontrado".
-     */
-    public ResponseEntity<Object> findByCargo(UUID idCargo) {
-        Cargo cargo = cargoRepository.findById(idCargo).orElse(null);
-        if (cargo != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(cargo);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cargo não encontrado");
-        }
-    }
-
-    /**
      * Salva um novo cargo.
      *
      * @param cargoDTO Objeto de transferência de dados contendo informações do novo cargo.
      * @return ResponseEntity contendo o cargo salvo.
      */
     public ResponseEntity<Object> saveCargo(CargoDTO cargoDTO) {
-        Cargo novoCargo = new Cargo();
-        BeanUtils.copyProperties(cargoDTO, novoCargo);
-        Cargo cargoSalvo = cargoRepository.save(novoCargo);
-        return ResponseEntity.status(HttpStatus.OK).body(cargoSalvo);
+
+        Instituicao instituicao = instituicaoRepository.findById(cargoDTO.getIdEmpresa()).orElse(null);
+        if (instituicao != null) {
+            Cargo novoCargo = new Cargo();
+            novoCargo.setInstituicao(instituicao);
+            BeanUtils.copyProperties(cargoDTO, novoCargo);
+            Cargo cargoSalvo = cargoRepository.save(novoCargo);
+            return ResponseEntity.status(HttpStatus.OK).body(cargoSalvo);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Instituicao não encontrada");
+        }
+
     }
 
     /**

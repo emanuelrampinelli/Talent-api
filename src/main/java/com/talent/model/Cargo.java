@@ -21,4 +21,8 @@ public class Cargo {
 
     @Column
     private String descricao;
+
+    @NotNull
+    @ManyToOne
+    private Instituicao instituicao;
 }
