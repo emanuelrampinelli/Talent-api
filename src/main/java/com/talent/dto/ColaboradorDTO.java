@@ -14,5 +14,7 @@ public class ColaboradorDTO {
     private String dataNascimento;
     private String dataAdmissao;
     private String dataDesligamento;
-    private UsuarioDTO usuario;
+    private UUID idInstituicao;
+    private UUID idCargo;
+    private UsuarioDTO usuario = new UsuarioDTO();
 }

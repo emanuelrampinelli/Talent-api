@@ -2,6 +2,7 @@ package com.talent.controllers;
 
 import com.talent.dto.ColaboradorDTO;
 import com.talent.services.ColaboradorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,23 +31,34 @@ public class ColaboradorController {
     }
 
     /**
+     * Obtém uma lista de colaboradores por ID de Instituição.
+     *
+     * @param id ID da instituição para a qual se deseja obter a lista de colaboradores.
+     * @return ResponseEntity contendo a lista de colaboradores ou uma mensagem de erro.
+     */
+    @GetMapping("/instituicao/{id}")
+    public ResponseEntity<Object> getColaboradoresByInstituicao(@PathVariable UUID id) {
+        return colaboradorService.getColaboradoresByInstituicao(id);
+    }
+
+    /**
      * Salva um novo colaborador.
      *
      * @param colaboradorDTO DTO contendo informações do novo colaborador.
      * @return ResponseEntity contendo o colaborador recém-criado ou uma mensagem de erro.
      */
     @PostMapping
-    public ResponseEntity<Object> saveColaborador(@RequestBody ColaboradorDTO colaboradorDTO) {
+    public ResponseEntity<Object> saveColaborador(@RequestBody @Valid ColaboradorDTO colaboradorDTO) {
         return colaboradorService.saveColaborador(colaboradorDTO);
     }
 
-    /**
-     * Atualiza um colaborador existente.
-     *
-     * @param id            ID do colaborador a ser atualizado.
-     * @param colaboradorDTO DTO contendo as informações atualizadas do colaborador.
-     * @return ResponseEntity contendo o colaborador atualizado ou uma mensagem de erro.
-     */
+        /**
+         * Atualiza um colaborador existente.
+         *
+         * @param id            ID do colaborador a ser atualizado.
+         * @param colaboradorDTO DTO contendo as informações atualizadas do colaborador.
+         * @return ResponseEntity contendo o colaborador atualizado ou uma mensagem de erro.
+         */
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateColaborador(@PathVariable UUID id, @RequestBody ColaboradorDTO colaboradorDTO) {
         return colaboradorService.updateColaborador(id, colaboradorDTO);

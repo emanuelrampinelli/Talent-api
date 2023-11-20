@@ -1,5 +1,6 @@
 package com.talent.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.talent.enums.UsuarioPerfilEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -22,23 +23,15 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull
-    @Column
-    private UsuarioPerfilEnum perfil;
+    @NotNull @Column        private UsuarioPerfilEnum perfil;
 
-    @NotNull
-    @Column
-    private Date dataCadastro;
+    @NotNull @Column        private Date dataCadastro;
 
-    @NotNull
-    @Column
-    private int isBloqueado;
+    @NotNull @Column        private int isBloqueado;
 
-    @Column
-    private String email;
+    @Column                 private String email;
 
-    @Column
-    private String senha;
+    @Column  @JsonIgnore    private String senha;
 
 
     @Override
@@ -50,7 +43,7 @@ public class Usuario implements UserDetails {
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
-    @Override
+    @Override @JsonIgnore
     public String getPassword() {
         // TODO Auto-generated method stub
         // Se o usuario for vazio, retorne novo usuario.getSenha()

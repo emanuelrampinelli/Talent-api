@@ -1,5 +1,6 @@
 package com.talent.dto.usuario;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.talent.enums.UsuarioPerfilEnum;
 import com.talent.model.Usuario;
@@ -15,11 +16,9 @@ public class UsuarioDTO {
 
     private UsuarioPerfilEnum perfil;
 
-    private String dataCadastro;
+    @JsonIgnore private String dataCadastro;
 
     private boolean isBloqueado;
-
-    private Long idEmpresa;
 
     private String email;
 
@@ -30,4 +29,5 @@ public class UsuarioDTO {
         BeanUtils.copyProperties(usuario,this);
     }
 
+    public UsuarioDTO (){}
 }
