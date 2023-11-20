@@ -37,6 +37,9 @@ public class Colaborador {
     @ManyToOne @JoinColumn(name = "fk_cargo")
     private Cargo cargo;
 
+    @OneToOne @JoinColumn(name = "fk_equipe")
+    private Equipe equipe;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -24,6 +24,7 @@ public class DateFormattingHelper {
      * @return A data formatada como uma string SQL.
      */
     public static String formatDateTimeToStringSQL(DateTime data) {
+        if (data == null) return null;
         int ano = data.getYearOfEra();
         int mes = data.getMonthOfYear();
         int dia = data.getDayOfMonth();
@@ -40,6 +41,7 @@ public class DateFormattingHelper {
      * @return Um objeto Date representando a data ou null se a conversão falhar.
      */
     public static Date formatDateBarra(String data) {
+        if (data == null) return null;
         String dateFormat = "dd/MM/yyyy"; // Formato da string de data
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
@@ -58,6 +60,8 @@ public class DateFormattingHelper {
      * @return Um objeto Date representando a data ou null se a conversão falhar.
      */
     public static Date formatDateTraco(String data) {
+
+        if (data == null) return null;
         String dateFormat = "dd-MM-yyyy"; // Formato da string de data
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
@@ -77,6 +81,9 @@ public class DateFormattingHelper {
      * @throws NumberFormatException Se a string de data não estiver no formato esperado.
      */
     public static DateTime formatStringToDateTime(String date) throws NumberFormatException {
+
+        if (date == null) return null;
+
         // Extrai ano, mês e dia da string de data
         int ano = Integer.parseInt(date.substring(0, 4));
         int mes = Integer.parseInt(date.substring(5, 7));

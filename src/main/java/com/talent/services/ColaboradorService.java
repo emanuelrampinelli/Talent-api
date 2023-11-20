@@ -124,8 +124,8 @@ public class ColaboradorService {
 
                 // Formata as datas no formato desejado.
                 novoColaborador.setDataNascimento(DateFormattingHelper.formatDateTraco(colaboradorDTO.getDataNascimento()));
-                novoColaborador.setDataAdmissao(DateFormattingHelper.formatDateTraco(colaboradorDTO.getDataNascimento()));
-                novoColaborador.setDataDesligamento(DateFormattingHelper.formatDateTraco(colaboradorDTO.getDataNascimento()));
+                novoColaborador.setDataAdmissao(DateFormattingHelper.formatDateTraco(colaboradorDTO.getDataAdmissao()));
+                novoColaborador.setDataDesligamento(DateFormattingHelper.formatDateTraco(colaboradorDTO.getDataDesligamento()));
 
                 // Salva o novo colaborador no repositório.
                 Colaborador colaboradorSalvo = colaboradorRepository.save(novoColaborador);
