@@ -23,10 +23,6 @@ public class Usuario implements UserDetails {
     private UUID id;
 
     @NotNull
-    @Column(length = 200)
-    private String nome;
-
-    @NotNull
     @Column
     private UsuarioPerfilEnum perfil;
 
@@ -39,12 +35,6 @@ public class Usuario implements UserDetails {
     private int isBloqueado;
 
     @Column
-    private Long idEmpresa;
-
-    @Column
-    private String nomeEmpresa;
-
-    @Column
     private String email;
 
     @Column
@@ -54,7 +44,7 @@ public class Usuario implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // TODO Auto-generated method stub
-        if(this.perfil == UsuarioPerfilEnum.ADMIN)
+        if(this.perfil == UsuarioPerfilEnum.ROLE_ADMIN)
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"),
                 new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));

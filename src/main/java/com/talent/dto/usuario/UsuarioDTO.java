@@ -13,8 +13,6 @@ public class UsuarioDTO {
 
     private UUID id;
 
-    private String nome;
-
     private UsuarioPerfilEnum perfil;
 
     private String dataCadastro;
@@ -22,8 +20,6 @@ public class UsuarioDTO {
     private boolean isBloqueado;
 
     private Long idEmpresa;
-
-    private String nomeEmpresa;
 
     private String email;
 

@@ -2,10 +2,10 @@ package com.talent.enums;
 
 public enum UsuarioPerfilEnum {
 
-    ADMIN("ADMIN"),
-    CONSULTOR("COLABORADOR");
+    ROLE_ADMIN("ROLE_ADMIN"),
+    ROLE_COLABORADOR("ROLE_COLABORADOR");
 
-    private String perfil;
+    private final String perfil;
 
     UsuarioPerfilEnum(String perfil) {
         this.perfil = perfil;
