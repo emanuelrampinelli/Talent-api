@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Serviço para manipulação de equipes.
+ */
 @Service
 public class EquipeService {
 
@@ -23,29 +26,54 @@ public class EquipeService {
     @Autowired
     private ColaboradorRepository colaboradorRepository;
 
+
+
     /**
-     * Obtém uma equipe por ID.
+     * Obtém uma equipe pelo nome.
      *
-     * @param id ID da equipe a ser obtida.
-     * @return ResponseEntity contendo a equipe ou uma mensagem de erro.
+     * @param nome O nome da equipe a ser recuperada.
+     * @return ResponseEntity contendo a equipe se encontrada, ou uma resposta 404 se não encontrada.
      */
-    public ResponseEntity<Object> getEquipeById(UUID id) {
-        Optional<Equipe> optionalEquipe = equipeRepository.findById(id);
-        if (optionalEquipe.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(optionalEquipe.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equipe não encontrada para o ID: " + id);
+    public ResponseEntity<Object> getEquipeByNome(String nome) {
+        try {
+            Optional<Equipe> optionalEquipe = equipeRepository.findByNome(nome);
+            if (optionalEquipe.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(optionalEquipe.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equipe não encontrada");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao obter a equipe por nome. " + e.getMessage());
         }
     }
 
     /**
-     * Salva uma nova equipe.
+     * Obtém uma equipe pelo ID.
      *
-     * @param equipeDTO DTO contendo informações da nova equipe.
-     * @return ResponseEntity contendo a equipe recém-criada ou uma mensagem de erro.
+     * @param id O ID da equipe a ser recuperada.
+     * @return ResponseEntity contendo a equipe se encontrada, ou uma resposta 404 se não encontrada.
+     */
+    public ResponseEntity<Object> getEquipeById(UUID id) {
+        try {
+            Optional<Equipe> optionalEquipe = equipeRepository.findById(id);
+            if (optionalEquipe.isPresent()) {
+                return ResponseEntity.status(HttpStatus.OK).body(optionalEquipe.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equipe não encontrada para o ID: " + id);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao obter a equipe por ID. " + e.getMessage());
+        }
+    }
+
+
+    /**
+     * Salva uma nova equipe com base no DTO fornecido.
+     *
+     * @param equipeDTO O DTO contendo informações sobre a equipe a ser salva.
+     * @return ResponseEntity contendo a equipe salva ou uma mensagem de erro.
      */
     public ResponseEntity<Object> saveEquipe(EquipeDTO equipeDTO) {
-
         try {
             // Busca o líder da equipe no repositório de colaboradores.
             Colaborador lider = colaboradorRepository.findById(equipeDTO.getIdLider()).orElse(null);
@@ -84,33 +112,51 @@ public class EquipeService {
         }
     }
 
-
     /**
-     * Atualiza uma equipe existente.
+     * Atualiza uma equipe existente com base no DTO fornecido.
      *
-     * @param id        ID da equipe a ser atualizada.
-     * @param equipeDTO DTO contendo as informações atualizadas da equipe.
-     * @return ResponseEntity contendo a equipe atualizada ou uma mensagem de erro.
+     * @param equipeDTO O DTO contendo informações atualizadas sobre a equipe.
+     * @return ResponseEntity contendo a equipe atualizada se encontrada, ou uma resposta 404 se não encontrada.
      */
-    public ResponseEntity<Object> updateEquipe(UUID id, EquipeDTO equipeDTO) {
-        // Implemente a lógica de validação e atualização da equipe no repositório.
-        // ...
+    public ResponseEntity<Object> updateEquipe(EquipeDTO equipeDTO) {
+        try {
+            Optional<Equipe> optionalEquipe = equipeRepository.findById(equipeDTO.getId());
 
-        // Exemplo de retorno de uma mensagem de sucesso.
-        return ResponseEntity.status(HttpStatus.OK).body("Equipe atualizada com sucesso.");
+            if (optionalEquipe.isPresent()) {
+                Equipe equipe = optionalEquipe.get();
+                UUID idEquipe = equipe.getId();
+                BeanUtils.copyProperties(equipeDTO, equipe);
+                equipe.setId(idEquipe);
+                Equipe equipeSalva = equipeRepository.save(equipe);
+                return ResponseEntity.status(HttpStatus.OK).body(equipeSalva);
+
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equipe não encontrada.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar a equipe. " + e.getMessage());
+        }
     }
 
     /**
-     * Exclui uma equipe por ID.
+     * Exclui uma equipe pelo ID.
      *
-     * @param id ID da equipe a ser excluída.
-     * @return ResponseEntity indicando o sucesso ou uma mensagem de erro.
+     * @param id O ID da equipe a ser excluída.
+     * @return ResponseEntity indicando o sucesso ou a falha da exclusão.
      */
     public ResponseEntity<Object> deleteEquipe(UUID id) {
-        // Implemente a lógica de exclusão da equipe no repositório.
-        // ...
+        try {
+            Optional<Equipe> optionalEquipe = equipeRepository.findById(id);
 
-        // Exemplo de retorno de uma mensagem de sucesso.
-        return ResponseEntity.status(HttpStatus.OK).body("Equipe excluída com sucesso.");
+            if (optionalEquipe.isPresent()) {
+                equipeRepository.deleteById(id);
+                return ResponseEntity.status(HttpStatus.OK).body("Equipe excluída com sucesso");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Equipe não encontrada");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao excluir a equipe. " + e.getMessage());
+        }
     }
+
 }

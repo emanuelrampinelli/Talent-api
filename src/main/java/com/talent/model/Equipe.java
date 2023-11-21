@@ -19,10 +19,13 @@ public class Equipe {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     private UUID id;
+
     @Column @NotNull
     private String nome;
+
     @Column @NotNull
     private String descricao;
+
     @OneToOne @JoinColumn(name = "fk_lider")
     private Colaborador lider;
 

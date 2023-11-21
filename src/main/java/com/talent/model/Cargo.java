@@ -20,15 +20,13 @@ public class Cargo {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     private UUID id;
 
-    @Column
-    @NotNull
+    @Column @NotNull
     private String nome;
 
     @Column
     private String descricao;
 
-    @NotNull
-    @ManyToOne
+    @NotNull @ManyToOne
     private Instituicao instituicao;
 
     @Override

@@ -2,6 +2,7 @@ package com.talent.services;
 
 import com.talent.dto.ColaboradorDTO;
 import com.talent.dto.usuario.UsuarioDTO;
+import com.talent.enums.ColaboradorStatusEnum;
 import com.talent.enums.MensagemResponseEnum;
 import com.talent.model.Cargo;
 import com.talent.model.Colaborador;
@@ -41,6 +42,33 @@ public class ColaboradorService {
 
     @Autowired
     private CargoRepository cargoRepository;
+
+    /**
+     * Obtém uma lista de colaboradores com base no nome, fkCargo e situacao.
+     *
+     * @param nome     Nome do colaborador.
+     * @param fkCargo  ID do cargo associado ao colaborador.
+     * @param situacao Situação do colaborador.
+     * @return ResponseEntity contendo a lista de colaboradores se encontrados ou uma resposta 404 se nenhum for encontrado.
+     */
+    public ResponseEntity<Object> findAllByNomeAndFkCargoAndSituacao(String nome, UUID fkCargo, ColaboradorStatusEnum situacao) {
+        try {
+            // Chama o repositório para buscar colaboradores com base nos parâmetros fornecidos.
+            List<Colaborador> colaboradores = colaboradorRepository.findAllByNomeAndFkCargoAndSituacao(nome, fkCargo, situacao);
+
+            // Verifica se foram encontrados colaboradores.
+            if (!colaboradores.isEmpty()) {
+                // Retorna a lista de colaboradores com status HTTP OK.
+                return ResponseEntity.status(HttpStatus.OK).body(colaboradores);
+            } else {
+                // Retorna uma resposta 404 indicando que os colaboradores não foram encontrados.
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Colaboradores não encontrados");
+            }
+        } catch (Exception e) {
+            // Retorna uma resposta 500 indicando um erro interno caso ocorra uma exceção.
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao buscar colaboradores. " + e.getMessage());
+        }
+    }
 
     /**
      * Obtém um colaborador por ID.

@@ -21,12 +21,24 @@ public class Colaborador {
 
     @Id @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     private UUID id;
-    @Column @NotNull private String nome;
-    @Column @NotNull private String matricula;
-    @Column @NotNull private ColaboradorStatusEnum situacao;
-    @Column @NotNull private Date dataNascimento;
-    @Column @NotNull private Date dataAdmissao;
-    @Column private Date dataDesligamento;
+
+    @Column @NotNull
+    private String nome;
+
+    @Column @NotNull
+    private String matricula;
+
+    @Column @NotNull
+    private ColaboradorStatusEnum situacao;
+
+    @Column @NotNull
+    private Date dataNascimento;
+
+    @Column @NotNull
+    private Date dataAdmissao;
+
+    @Column
+    private Date dataDesligamento;
 
     @OneToOne @JoinColumn(name = "fk_usuario")
     private Usuario usuario;

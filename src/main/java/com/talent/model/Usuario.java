@@ -23,15 +23,20 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @NotNull @Column        private UsuarioPerfilEnum perfil;
+    @NotNull @Column
+    private UsuarioPerfilEnum perfil;
 
-    @NotNull @Column        private Date dataCadastro;
+    @NotNull @Column
+    private Date dataCadastro;
 
-    @NotNull @Column        private int isBloqueado;
+    @NotNull @Column
+    private int isBloqueado;
 
-    @Column                 private String email;
+    @Column
+    private String email;
 
-    @Column  @JsonIgnore    private String senha;
+    @Column  @JsonIgnore
+    private String senha;
 
 
     @Override

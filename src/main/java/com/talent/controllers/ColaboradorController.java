@@ -1,6 +1,7 @@
 package com.talent.controllers;
 
 import com.talent.dto.ColaboradorDTO;
+import com.talent.enums.ColaboradorStatusEnum;
 import com.talent.services.ColaboradorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,21 @@ public class ColaboradorController {
 
     @Autowired
     private ColaboradorService colaboradorService;
+
+    /**
+     * Obtém uma lista de colaboradores com base no nome, fkCargo e situacao.
+     *
+     * @param nome     Nome do colaborador.
+     * @param fkCargo  ID do cargo associado ao colaborador.
+     * @param situacao Situação do colaborador.
+     * @return ResponseEntity contendo a lista de colaboradores ou uma resposta 404 se nenhum for encontrado.
+     */
+    @GetMapping("/buscar/{nome}/{fkCargo}/{situacao}")
+    public ResponseEntity<Object> findAllByNomeAndFkCargoAndSituacao(@PathVariable String nome,
+                                                                     @PathVariable UUID fkCargo,
+                                                                     @PathVariable ColaboradorStatusEnum situacao) {
+        return colaboradorService.findAllByNomeAndFkCargoAndSituacao(nome, fkCargo, situacao);
+    }
 
     /**
      * Obtém um colaborador por ID.
