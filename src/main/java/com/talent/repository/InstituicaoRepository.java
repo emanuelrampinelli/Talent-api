@@ -8,9 +8,18 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-@Transactional
+/**
+ * Repositório para a entidade Instituicao.
+ */
 @Repository
+@Transactional
 public interface InstituicaoRepository extends JpaRepository<Instituicao, UUID> {
 
-    Optional<Instituicao> findByNome (String nome);
+    /**
+     * Busca uma instituição pelo nome.
+     *
+     * @param nome Nome da instituição a ser procurada.
+     * @return Uma instituição opcional com o nome fornecido, ou vazia se não encontrada.
+     */
+    Optional<Instituicao> findByNome(String nome);
 }

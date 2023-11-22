@@ -6,27 +6,57 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 import java.util.UUID;
 
+/**
+ * Entidade que representa uma Equipe.
+ */
 @Entity
 @Getter
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table(name="EQUIPE")
+@Table(name = "EQUIPE")
 public class Equipe {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     private UUID id;
 
-    @Column @NotNull
+    @Column
+    @NotNull
     private String nome;
 
-    @Column @NotNull
+    @Column
+    @NotNull
     private String descricao;
 
-    @OneToOne @JoinColumn(name = "fk_lider")
+    @OneToOne
+    @JoinColumn(name = "fk_lider")
     private Colaborador lider;
 
+    /**
+     * Verifica se dois objetos Equipe são iguais.
+     *
+     * @param o Objeto a ser comparado.
+     * @return true se os objetos são iguais, false caso contrário.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Equipe equipe = (Equipe) o;
+        return id != null && id.equals(equipe.id);
+    }
+
+    /**
+     * Gera um código de hash único para o objeto Equipe.
+     *
+     * @return Código de hash.
+     */
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
