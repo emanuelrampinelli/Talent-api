@@ -22,4 +22,5 @@ public interface EquipeRepository extends JpaRepository<Equipe, UUID> {
      * @return Uma equipe opcional com o nome fornecido, ou vazio se não encontrada.
      */
     Optional<Equipe> findByNome(String nome);
+
 }

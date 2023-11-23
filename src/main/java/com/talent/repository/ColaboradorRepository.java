@@ -23,6 +23,8 @@ public interface ColaboradorRepository  extends JpaRepository<Colaborador, UUID>
      */
     List<Colaborador> findAllByInstituicaoId(UUID idInstituicao);
 
+    List<Colaborador> findAllByEquipeId(UUID idEquipe);
+
     @Query("SELECT c FROM Colaborador c " +
             "WHERE c.nome = :nome OR c.cargo.id = :fk_cargo OR c.situacao = :situacao")
     List<Colaborador> findAllByNomeAndFkCargoAndSituacao(@Param("nome") String nome,
