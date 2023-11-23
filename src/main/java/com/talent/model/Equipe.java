@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -35,6 +37,9 @@ public class Equipe {
     @OneToOne
     @JoinColumn(name = "fk_lider")
     private Colaborador lider;
+
+    @ManyToMany(mappedBy = "equipes")
+    private Set<Avaliacao> avaliacoes = new HashSet<>();
 
     /**
      * Verifica se dois objetos Equipe são iguais.
